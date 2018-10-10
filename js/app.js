@@ -36,24 +36,26 @@ const shuffledCardTile = shuffle(cardTile);
 </li>
 */
 
-const cardContainer = document.querySelector('.deck');
+const cardContainer = document.querySelector(".deck");
+let list = document.createElement("ul");
+let newListItem;
+let newCard;
 
-for (const card of shuffledCardTile){
-    /* we create the class container for one card*/
-    let newListItem = document.createElement("li");
-    newListItem.classList.add("card");
-    /* we create and add the css class to the card item itself*/
-    let newCard = document.createElement("i");
-    newCard.classList.add("fa");
-    newCard.classList.add(`${card}`);
+for (const card of shuffledCardTile) {
+  /* we create the class container for one card*/
+  newListItem = document.createElement("li");
+  newListItem.classList.add("card");
+  /* we create and add the css class to the card item itself*/
+  newCard = document.createElement("i");
+  newCard.classList.add("fa");
+  newCard.classList.add("`${card}`");
 
-    /*Introduce the item into the card li element*/
-    newListItem.appendChild(newCard);
-    /*Introduce this new whole html code under the deck class*/
-    cardContainer.appendChild(newListItem);
+  /*Introduce the item into the card li element*/
+  newListItem.appendChild(newCard);
+  list.appendChild(newListItem);
 }
-
-
+/*Introduce this new whole html code under the deck class*/
+cardContainer.appendChild(list);
 /*
                 NEXT
  * set up the event listener for a card. If a card is clicked:
