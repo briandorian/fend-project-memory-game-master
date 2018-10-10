@@ -68,11 +68,15 @@ for (const card of shuffledCardTile){
 
 /* we collect all the cards shown*/
 const cards = document.getElementsByClassName("card");
+//const cards = document.querySelectorAll(".card .fa");
 
 for (const card of cards){
     card.addEventListener("click",cardClicked);
 }
 
 function cardClicked (){
- console.log("hola--> " +event.target.getElementsByClassName("fa"));
+  event.target.className = "card open show";
+ console.log("hola--> " +event.target.classList );
+ console.log("adios--> "+ event.target.closest("i"));
+
 }
