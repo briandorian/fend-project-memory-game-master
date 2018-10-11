@@ -68,15 +68,33 @@ for (const card of shuffledCardTile){
 
 /* we collect all the cards shown*/
 const cards = document.getElementsByClassName("card");
-//const cards = document.querySelectorAll(".card .fa");
+const openedCards = new Array();
 
 for (const card of cards){
     card.addEventListener("click",cardClicked);
 }
 
 function cardClicked (){
-  event.target.className = "card open show";
- console.log("hola--> " +event.target.classList );
- console.log("adios--> "+ event.target.closest("i"));
+  //We check if the card is already opened, and if it is, we close it.
+  if (event.target.className == "card open show"){
+        event.target.className = "card";
+  }else{
+        event.target.className = "card open show";
+        addCardToOpenCardsDeck(event.target.getElementsByTagName("i")[0]);
+  }
+}
 
+function addCardToOpenCardsDeck(card2Check){
+    if (openedCards.includes(card2Check.className)){
+        itsAMatch(card2Check);
+    }else{
+        openedCards.push(card2Check.className);
+    }
+}
+function itsAMatch(match){
+  let nestedClass = match.classList[1];
+  let matchingCards = document.querySelectorAll('.card  .'+nestedClass);
+    for (mCards of matchingCards){
+      mCards.className = "card match";
+    }
 }
