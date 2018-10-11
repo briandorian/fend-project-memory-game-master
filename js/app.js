@@ -94,7 +94,10 @@ function addCardToOpenCardsDeck(card2Check){
 function itsAMatch(match){
   let nestedClass = match.classList[1];
   let matchingCards = document.querySelectorAll('.card  .'+nestedClass);
-    for (mCards of matchingCards){
-      mCards.className = "card match";
+
+    for (mCard of matchingCards){
+      mCard.parentElement.className = "card match";
+console.dir(mCard);
+      mCard.parentElement.removeEventListener("click",cardClicked);
     }
 }
