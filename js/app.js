@@ -57,10 +57,10 @@ for (const card of shuffledCardTile){
 /*
                 NEXT
  * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
+ *  - display the card's symbol (put this functionality in another function that you call from this one)  DONE
+ *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one) DONE
+ *  - if the list already has another card, check to see if the two cards match    DONE
+ *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one) DONE
  *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
@@ -70,34 +70,48 @@ for (const card of shuffledCardTile){
 const cards = document.getElementsByClassName("card");
 const openedCards = new Array();
 
+
 for (const card of cards){
     card.addEventListener("click",cardClicked);
 }
 
 function cardClicked (){
-  //We check if the card is already opened, and if it is, we close it.
-  if (event.target.className == "card open show"){
-        event.target.className = "card";
-  }else{
-        event.target.className = "card open show";
-        addCardToOpenCardsDeck(event.target.getElementsByTagName("i")[0]);
+  const elementClicked = event.target;
+  elementClicked.className = "card open show";
+console.log("Array-->" + openedCards[1]);
+  if (openedCards.length == 0){
+      // First card we select
+      addCardToOpenCardsDeck(elementClicked);
+  }else if (openedCards.length > 0){
+      if (openedCards.includes(elementClicked)){
+          // matching pair
+          itsAMatch(elementClicked);
+      }else{
+        // non-matching pairs
+          notAMatch(elementClicked);
+      }
   }
 }
 
 function addCardToOpenCardsDeck(card2Check){
-    if (openedCards.includes(card2Check.className)){
-        itsAMatch(card2Check);
-    }else{
-        openedCards.push(card2Check.className);
-    }
+      openedCards.push(card2Check);
 }
+
 function itsAMatch(match){
+console.log("its a Match");
   let nestedClass = match.classList[1];
   let matchingCards = document.querySelectorAll('.card  .'+nestedClass);
 
     for (mCard of matchingCards){
       mCard.parentElement.className = "card match";
-console.dir(mCard);
       mCard.parentElement.removeEventListener("click",cardClicked);
+      openedCards.push(mCard.parentElement);
     }
+}
+
+function notAMatch(notMatch){
+console.log("NOT a Match");
+  let maCards = document.querySelector('.card  .'+notMatch.getElementsByTagName("i")[0].classList[1]);
+  maCards.parentElement.className = "card";
+  openedCards.pop().className = "card";
 }
