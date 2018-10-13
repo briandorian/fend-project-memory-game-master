@@ -21,66 +21,71 @@ function shuffle(array) {
     return array;
 }
 
-//we retrieve an unordered list of items to afterwards create the deck
-const shuffledCardTile = shuffle(cardTile);
-
-/*html example to create every card using the already given css
-<li class="card">
-    <i class="fa fa-diamond"></i>
-</li>
-<li class="card">
-    <i class="fa fa-paper-plane-o"></i>
-</li>
-<li class="card match">
-    <i class="fa fa-anchor"></i>
-</li>
-*/
-
-const cardContainer = document.querySelector(".deck");
-let list = document.createElement("ul");
-let newListItem;
-let newCard;
-
-for (const card of shuffledCardTile) {
-  /* we create the class container for one card*/
-  newListItem = document.createElement("li");
-  newListItem.classList.add("card");
-  /* we create and add the css class to the card item itself*/
-  newCard = document.createElement("i");
-  newCard.classList.add("fa");
-  newCard.classList.add(`${card}`);
-
-  /*Introduce the item into the card li element*/
-  newListItem.appendChild(newCard);
-  list.appendChild(newListItem);
-}
-/*Introduce this new whole html code under the deck class*/
-cardContainer.appendChild(list);
-/*
-                NEXT
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)  DONE
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one) DONE
- *  - if the list already has another card, check to see if the two cards match    DONE
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one) DONE
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
-
-/* we collect all the cards shown*/
-const cards = document.getElementsByClassName("card");
-
-// Create two arrays, one to control the options and the other to be filled
-// by the correct pairs.
-
-let openedCards = new Array();
-const matchedCards = new Array();
+let counter;
+let openedCards = new Array() ;
+let matchedCards = new Array();
+let counterLiteral = document.getElementsByClassName("moves");
 
 
-// Adding the addEventListener to all cards
-for (const card of cards){
-    card.addEventListener("click",cardClicked);
+window.onload = startGame;
+
+function startGame(){
+  /* Init of the variables*/
+  counter=0;
+  counterLiteral[0].innerHTML = counter;
+  openedCards = [];
+  matchedCards = [];
+
+  // Shuffle of the cards
+  const shuffledCardTile = shuffle(cardTile);
+  const cardContainer = document.querySelector(".deck");
+
+  // delete the ul part to create it again.
+  let cardsContainerUL = document.getElementsByClassName("cards-container");
+  if (cardsContainerUL.length > 0)
+  {
+      cardContainer.removeChild(cardsContainerUL[0]);
+  }
+
+  let list = document.createElement("ul");
+  list.classList.add("cards-container");
+  let newListItem;
+  let newCard;
+
+  for (const card of shuffledCardTile) {
+    /* we create the class container for one card*/
+    newListItem = document.createElement("li");
+  //  newListItem.classList.add("card");
+    newListItem.classList.add("card");
+    /* we create and add the css class to the card item itself*/
+    newCard = document.createElement("i");
+    newCard.classList.add("fa");
+    newCard.classList.add(`${card}`);
+
+    /*Introduce the item into the card li element*/
+    newListItem.appendChild(newCard);
+    list.appendChild(newListItem);
+  }
+  /*Introduce this new whole html code under the deck class*/
+  cardContainer.appendChild(list);
+
+  const restart = document.getElementsByClassName("fa-repeat");
+  restart[0].addEventListener("click",restartGame);
+
+  /* we collect all the cards shown*/
+  const cards = document.getElementsByClassName("card");
+
+  // Create two arrays, one to control the options and the other to be filled
+  // by the correct pairs.
+
+
+  // Adding the addEventListener to all cards
+  for (const card of cards){
+      card.addEventListener("click",cardClicked);
+  }
+
+
+
 }
 
 function cardClicked (){
@@ -96,6 +101,7 @@ function cardClicked (){
     if (openedCards[0].childNodes[0].className == openedCards[1].childNodes[0].className){
           // matching pair
           itsAMatch(elementClicked);
+          updateCounter();
 
       }else{
         // non-matching pairs
@@ -139,4 +145,20 @@ function notAMatch(notMatch){
     openedCards = [];
   }, 500);
 
+}
+
+function updateCounter(){
+  counter = counter + 1;
+  counterLiteral[0].innerHTML = counter;
+}
+
+function restartGame(){
+  let cards = document.getElementsByClassName("card");
+  let restartButton = document.getElementsByClassName("fa-repeat");
+  for (card of cards){
+    card.classList.remove="show";
+  }
+  restartButton[0].removeEventListener("click",restartGame);
+
+  startGame();
 }
