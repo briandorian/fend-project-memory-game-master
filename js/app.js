@@ -68,7 +68,8 @@ for (const card of shuffledCardTile){
 
 /* we collect all the cards shown*/
 const cards = document.getElementsByClassName("card");
-const openedCards = new Array();
+let openedCards = new Array();
+const matchedCards = new Array();
 
 
 for (const card of cards){
@@ -77,15 +78,15 @@ for (const card of cards){
 
 function cardClicked (){
   const elementClicked = event.target;
-  elementClicked.className = "card open show";
-console.log("Array-->" + openedCards[1]);
-  if (openedCards.length == 0){
-      // First card we select
-      addCardToOpenCardsDeck(elementClicked);
-  }else if (openedCards.length > 0){
-      if (openedCards.includes(elementClicked)){
+  handleShowingCard(elementClicked);
+
+  openedCards.push(elementClicked);
+
+ if (openedCards.length === 2){
+    if (openedCards[0].childNodes[0].className == openedCards[1].childNodes[0].className){
           // matching pair
           itsAMatch(elementClicked);
+
       }else{
         // non-matching pairs
           notAMatch(elementClicked);
@@ -93,25 +94,31 @@ console.log("Array-->" + openedCards[1]);
   }
 }
 
-function addCardToOpenCardsDeck(card2Check){
-      openedCards.push(card2Check);
+function handleShowingCard(elementClicked){
+
+     elementClicked.classList.toggle("open");
+     elementClicked.classList.toggle("show");
+     elementClicked.classList.toggle("disabled");
 }
 
 function itsAMatch(match){
-console.log("its a Match");
-  let nestedClass = match.classList[1];
-  let matchingCards = document.querySelectorAll('.card  .'+nestedClass);
+  openedCards[0].className = "card match";
+  openedCards[1].className = "card match";
+  matchedCards.push(openedCards[0]);
+  matchedCards.push(openedCards[1]);
+  openedCards[0].removeEventListener("click",cardClicked);
+  openedCards[1].removeEventListener("click",cardClicked);
+  openedCards=[];
 
-    for (mCard of matchingCards){
-      mCard.parentElement.className = "card match";
-      mCard.parentElement.removeEventListener("click",cardClicked);
-      openedCards.push(mCard.parentElement);
-    }
 }
 
 function notAMatch(notMatch){
-console.log("NOT a Match");
-  let maCards = document.querySelector('.card  .'+notMatch.getElementsByTagName("i")[0].classList[1]);
-  maCards.parentElement.className = "card";
-  openedCards.pop().className = "card";
+
+  setTimeout(function () {
+
+    openedCards[0].className = "card";
+    openedCards[1].className = "card";
+    openedCards = [];
+  }, 500);
+
 }
