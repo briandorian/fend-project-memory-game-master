@@ -1,14 +1,10 @@
-/*
- * Create a list that holds all of your cards
- */
 
-
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
+/* We create an array containing all the available cards twice so we can later
+fill the grid with the cards two times */
+const cardTile = ['fa-diamond','fa-diamond','fa-paper-plane-o',
+'fa-paper-plane-o','fa-anchor','fa-anchor','fa-bolt','fa-bolt',
+'fa-cube','fa-cube','fa-leaf','fa-leaf','fa-bicycle','fa-bicycle',
+'fa-bomb','fa-bomb'];
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -25,8 +21,43 @@ function shuffle(array) {
     return array;
 }
 
+//we retrieve an unordered list of items to afterwards create the deck
+const shuffledCardTile = shuffle(cardTile);
 
+/*html example to create every card using the already given css
+<li class="card">
+    <i class="fa fa-diamond"></i>
+</li>
+<li class="card">
+    <i class="fa fa-paper-plane-o"></i>
+</li>
+<li class="card match">
+    <i class="fa fa-anchor"></i>
+</li>
+*/
+
+const cardContainer = document.querySelector(".deck");
+let list = document.createElement("ul");
+let newListItem;
+let newCard;
+
+for (const card of shuffledCardTile) {
+  /* we create the class container for one card*/
+  newListItem = document.createElement("li");
+  newListItem.classList.add("card");
+  /* we create and add the css class to the card item itself*/
+  newCard = document.createElement("i");
+  newCard.classList.add("fa");
+  newCard.classList.add("`${card}`");
+
+  /*Introduce the item into the card li element*/
+  newListItem.appendChild(newCard);
+  list.appendChild(newListItem);
+}
+/*Introduce this new whole html code under the deck class*/
+cardContainer.appendChild(list);
 /*
+                NEXT
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
  *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
