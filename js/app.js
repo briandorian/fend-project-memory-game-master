@@ -48,7 +48,7 @@ for (const card of shuffledCardTile) {
   /* we create and add the css class to the card item itself*/
   newCard = document.createElement("i");
   newCard.classList.add("fa");
-  newCard.classList.add("`${card}`");
+  newCard.classList.add(`${card}`);
 
   /*Introduce the item into the card li element*/
   newListItem.appendChild(newCard);
