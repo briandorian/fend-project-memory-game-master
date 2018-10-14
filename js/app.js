@@ -26,8 +26,9 @@ let openedCards = new Array() ;
 let matchedCards = new Array();
 let counterLiteral = document.getElementsByClassName("moves");
 let startingTime;
+let howManyStars;
 
-
+// Function to force the startGame function to execute with each refresh of the page and access.
 window.onload = startGame;
 
 function startGame(){
@@ -42,7 +43,7 @@ function startGame(){
   const shuffledCardTile = shuffle(cardTile);
   const cardContainer = document.querySelector(".deck");
 
-  // delete the ul part to create it again.
+  // Verify if the stars are full (3) or not
   let cardsContainerUL = document.getElementsByClassName("cards-container");
 
   if (cardsContainerUL.length > 0)
@@ -58,6 +59,7 @@ function startGame(){
   let newListItem;
   let newCard;
 
+/* Function to shuffle and position the html cards deck */
   for (const card of shuffledCardTile) {
     /* we create the class container for one card*/
     newListItem = document.createElement("li");
@@ -90,9 +92,11 @@ function startGame(){
       card.addEventListener("click",cardClicked);
   }
 
+  // We create the modal view but not show yet, until  is needed
   const modal = document.getElementById('demo-modal');
   const repeatGame = document.getElementById('play-again');
 
+  // In case the event listener is already there (restar vs new game)
   repeatGame.removeEventListener("click",restartGame);
   repeatGame.removeEventListener("click", function(){ modal.close();});
 
@@ -142,7 +146,7 @@ function itsAMatch(match){
   matchedCards.push(openedCards[0]);
   matchedCards.push(openedCards[1]);
 
-
+// When the matched cards array contains the same number of the total of cards... game end
   if (matchedCards.length == 16){
       showModalOfSuccess();
   }
@@ -165,13 +169,14 @@ function notAMatch(notMatch){
   }, 600);
 
 }
-
+// Function to update the counter every pair try
 function updateCounter(){
   counter = counter + 1;
   counterLiteral[0].innerHTML = counter;
   ratingStars();
 }
 
+// restart game function
 function restartGame(){
   let cards = document.getElementsByClassName("card");
   let restartButton = document.getElementsByClassName("fa-repeat");
@@ -183,6 +188,7 @@ function restartGame(){
   startGame();
 }
 
+// Modal to be shown when the game ends
 function showModalOfSuccess(){
   let modal = document.getElementById('demo-modal');
   modal.showModal();
@@ -190,7 +196,9 @@ function showModalOfSuccess(){
     let modalBody = document.getElementsByClassName("modal-body");
     let paragraph = document.createElement("p");
     let time = Date.now() - startingTime;
-    paragraph.innerHTML = `You made it! It took you ${counter} moves and ${msToTime(time)} !`;
+
+    paragraph.innerHTML = `You made it! It took you ${counter} moves and
+    ${msToTime(time)} (H:m:s:ms) with a rating of ${howManyStars} stars!!`;
     modalBody[0].appendChild(paragraph);
 
     // close when clicking on backdrop
@@ -201,26 +209,32 @@ function showModalOfSuccess(){
     });
 }
 
+// function with a switch to evaluate the need of stars being shown or not
 function ratingStars(){
 
   switch (true) {
     case (counter > 0 && counter < 10):
+        howManyStars = 3;
         break;
     case (counter >= 10 && counter < 18):
         document.getElementsByClassName("star1")[0].classList.add("hide");
+        howManyStars = 2;
         break;
     case (counter >= 18 && counter < 24):
         document.getElementsByClassName("star1")[0].classList.add("hide");
         document.getElementsByClassName("star2")[0].classList.add("hide");
+        howManyStars = 1;
         break;
     case (counter >= 24):
         document.getElementsByClassName("star1")[0].classList.add("hide");
         document.getElementsByClassName("star2")[0].classList.add("hide");
         document.getElementsByClassName("star3")[0].classList.add("hide");
+        howManyStars=0;
         break;
       }
   }
 
+// Function to convert ms to HH:mm:ss:ms 
 function msToTime(duration) {
   var milliseconds = parseInt((duration % 1000) / 100),
     seconds = parseInt((duration / 1000) % 60),
