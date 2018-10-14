@@ -8,6 +8,7 @@
   <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
   <link rel="stylesheet prefetch" href="https://fonts.googleapis.com/css?family=Coda">
   <link rel="stylesheet" href="css/app.css">
+
 </head>
 
 <body>
@@ -17,14 +18,27 @@
       <h1>Matching Game</h1>
     </header>
 
+<section id="modal">
+    <dialog id="demo-modal">
+      <h1 class="modal-header">CONGRATULATIONS</h1>
+      <div class="modal-body">
+      <!--  <p>You made the game in  .</p>
+        <p>And a polyfill makes this usable today.</p>-->
+      </div>
+      <footer class="modal-footer">
+        <button id="play-again" type="button">Play again</button>
+      </footer>
+<!--      <button id="close" class="close" type="button">&times;</button>-->
+  </dialog>
+</section>
     <section class="score-panel">
       <ul class="stars">
-        <li><i class="fa fa-star"></i></li>
-        <li><i class="fa fa-star"></i></li>
-        <li><i class="fa fa-star"></i></li>
+        <li><i class="fa fa-star star1"></i></li>
+        <li><i class="fa fa-star star2"></i></li>
+        <li><i class="fa fa-star star3"></i></li>
       </ul>
 
-      <span class="moves">3</span> Moves
+      <span class="moves"></span> Moves
 
       <div class="restart">
         <i class="fa fa-repeat"></i>

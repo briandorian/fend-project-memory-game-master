@@ -21,66 +21,88 @@ function shuffle(array) {
     return array;
 }
 
-//we retrieve an unordered list of items to afterwards create the deck
-const shuffledCardTile = shuffle(cardTile);
+let counter;
+let openedCards = new Array() ;
+let matchedCards = new Array();
+let counterLiteral = document.getElementsByClassName("moves");
+let startingTime;
+let howManyStars;
 
-/*html example to create every card using the already given css
-<li class="card">
-    <i class="fa fa-diamond"></i>
-</li>
-<li class="card">
-    <i class="fa fa-paper-plane-o"></i>
-</li>
-<li class="card match">
-    <i class="fa fa-anchor"></i>
-</li>
-*/
+// Function to force the startGame function to execute with each refresh of the page and access.
+window.onload = startGame;
 
-const cardContainer = document.querySelector(".deck");
-let list = document.createElement("ul");
-let newListItem;
-let newCard;
+function startGame(){
+  /* Init of the variables*/
+  counter=0;
+  counterLiteral[0].innerHTML = counter;
+  openedCards = [];
+  matchedCards = [];
+  startingTime = Date.now();
 
-for (const card of shuffledCardTile) {
-  /* we create the class container for one card*/
-  newListItem = document.createElement("li");
-  newListItem.classList.add("card");
-  /* we create and add the css class to the card item itself*/
-  newCard = document.createElement("i");
-  newCard.classList.add("fa");
-  newCard.classList.add(`${card}`);
+  // Shuffle of the cards
+  const shuffledCardTile = shuffle(cardTile);
+  const cardContainer = document.querySelector(".deck");
 
-  /*Introduce the item into the card li element*/
-  newListItem.appendChild(newCard);
-  list.appendChild(newListItem);
-}
-/*Introduce this new whole html code under the deck class*/
-cardContainer.appendChild(list);
-/*
-                NEXT
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)  DONE
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one) DONE
- *  - if the list already has another card, check to see if the two cards match    DONE
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one) DONE
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
+  // Verify if the stars are full (3) or not
+  let cardsContainerUL = document.getElementsByClassName("cards-container");
 
-/* we collect all the cards shown*/
-const cards = document.getElementsByClassName("card");
+  if (cardsContainerUL.length > 0)
+  {
+      cardContainer.removeChild(cardsContainerUL[0]);
+      document.getElementsByClassName("star1")[0].classList.remove("hide");
+      document.getElementsByClassName("star2")[0].classList.remove("hide");
+      document.getElementsByClassName("star3")[0].classList.remove("hide");
+  }
 
-// Create two arrays, one to control the options and the other to be filled
-// by the correct pairs.
+  let list = document.createElement("ul");
+  list.classList.add("cards-container");
+  let newListItem;
+  let newCard;
 
-let openedCards = new Array();
-const matchedCards = new Array();
+/* Function to shuffle and position the html cards deck */
+  for (const card of shuffledCardTile) {
+    /* we create the class container for one card*/
+    newListItem = document.createElement("li");
+  //  newListItem.classList.add("card");
+    newListItem.classList.add("card");
+    /* we create and add the css class to the card item itself*/
+    newCard = document.createElement("i");
+    newCard.classList.add("fa");
+    newCard.classList.add(`${card}`);
+
+    /*Introduce the item into the card li element*/
+    newListItem.appendChild(newCard);
+    list.appendChild(newListItem);
+  }
+  /*Introduce this new whole html code under the deck class*/
+  cardContainer.appendChild(list);
+
+  const restart = document.getElementsByClassName("fa-repeat");
+  restart[0].addEventListener("click",restartGame);
+
+  /* we collect all the cards shown*/
+  const cards = document.getElementsByClassName("card");
+
+  // Create two arrays, one to control the options and the other to be filled
+  // by the correct pairs.
 
 
-// Adding the addEventListener to all cards
-for (const card of cards){
-    card.addEventListener("click",cardClicked);
+  // Adding the addEventListener to all cards
+  for (const card of cards){
+      card.addEventListener("click",cardClicked);
+  }
+
+  // We create the modal view but not show yet, until  is needed
+  const modal = document.getElementById('demo-modal');
+  const repeatGame = document.getElementById('play-again');
+
+  // In case the event listener is already there (restar vs new game)
+  repeatGame.removeEventListener("click",restartGame);
+  repeatGame.removeEventListener("click", function(){ modal.close();});
+
+  repeatGame.addEventListener("click",restartGame);
+  repeatGame.addEventListener("click", function(){ modal.close();});
+
 }
 
 function cardClicked (){
@@ -91,7 +113,9 @@ function cardClicked (){
   //Introduce the card selected into the stack to be analyzed
   openedCards.push(elementClicked);
 
+
  if (openedCards.length === 2){
+   updateCounter();
     // When we have 2 cards we can compare it's childrens where the class is different.
     if (openedCards[0].childNodes[0].className == openedCards[1].childNodes[0].className){
           // matching pair
@@ -122,6 +146,11 @@ function itsAMatch(match){
   matchedCards.push(openedCards[0]);
   matchedCards.push(openedCards[1]);
 
+// When the matched cards array contains the same number of the total of cards... game end
+  if (matchedCards.length == 16){
+      showModalOfSuccess();
+  }
+
   openedCards[0].removeEventListener("click",cardClicked);
   openedCards[1].removeEventListener("click",cardClicked);
   // Reset the array to 0, so we can keep comparing pair by pair
@@ -137,6 +166,84 @@ function notAMatch(notMatch){
     openedCards[0].className = "card";
     openedCards[1].className = "card";
     openedCards = [];
-  }, 500);
+  }, 600);
 
+}
+// Function to update the counter every pair try
+function updateCounter(){
+  counter = counter + 1;
+  counterLiteral[0].innerHTML = counter;
+  ratingStars();
+}
+
+// restart game function
+function restartGame(){
+  let cards = document.getElementsByClassName("card");
+  let restartButton = document.getElementsByClassName("fa-repeat");
+  for (card of cards){
+    card.classList.remove="show";
+  }
+  restartButton[0].removeEventListener("click",restartGame);
+
+  startGame();
+}
+
+// Modal to be shown when the game ends
+function showModalOfSuccess(){
+  let modal = document.getElementById('demo-modal');
+  modal.showModal();
+    /* Creation of the paragraph to show data*/
+    let modalBody = document.getElementsByClassName("modal-body");
+    let paragraph = document.createElement("p");
+    let time = Date.now() - startingTime;
+
+    paragraph.innerHTML = `You made it! It took you ${counter} moves and
+    ${msToTime(time)} (H:m:s:ms) with a rating of ${howManyStars} stars!!`;
+    modalBody[0].appendChild(paragraph);
+
+    // close when clicking on backdrop
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.close('cancelled');
+      }
+    });
+}
+
+// function with a switch to evaluate the need of stars being shown or not
+function ratingStars(){
+
+  switch (true) {
+    case (counter > 0 && counter < 10):
+        howManyStars = 3;
+        break;
+    case (counter >= 10 && counter < 18):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        howManyStars = 2;
+        break;
+    case (counter >= 18 && counter < 24):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        document.getElementsByClassName("star2")[0].classList.add("hide");
+        howManyStars = 1;
+        break;
+    case (counter >= 24):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        document.getElementsByClassName("star2")[0].classList.add("hide");
+        document.getElementsByClassName("star3")[0].classList.add("hide");
+        howManyStars=0;
+        break;
+      }
+  }
+
+// Function to convert ms to HH:mm:ss:ms 
+function msToTime(duration) {
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 }
