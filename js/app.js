@@ -25,6 +25,7 @@ let counter;
 let openedCards = new Array() ;
 let matchedCards = new Array();
 let counterLiteral = document.getElementsByClassName("moves");
+let startingTime;
 
 
 window.onload = startGame;
@@ -35,6 +36,7 @@ function startGame(){
   counterLiteral[0].innerHTML = counter;
   openedCards = [];
   matchedCards = [];
+  startingTime = Date.now();
 
   // Shuffle of the cards
   const shuffledCardTile = shuffle(cardTile);
@@ -42,9 +44,13 @@ function startGame(){
 
   // delete the ul part to create it again.
   let cardsContainerUL = document.getElementsByClassName("cards-container");
+
   if (cardsContainerUL.length > 0)
   {
       cardContainer.removeChild(cardsContainerUL[0]);
+      document.getElementsByClassName("star1")[0].classList.remove("hide");
+      document.getElementsByClassName("star2")[0].classList.remove("hide");
+      document.getElementsByClassName("star3")[0].classList.remove("hide");
   }
 
   let list = document.createElement("ul");
@@ -84,7 +90,14 @@ function startGame(){
       card.addEventListener("click",cardClicked);
   }
 
+  const modal = document.getElementById('demo-modal');
+  const repeatGame = document.getElementById('play-again');
 
+  repeatGame.removeEventListener("click",restartGame);
+  repeatGame.removeEventListener("click", function(){ modal.close();});
+
+  repeatGame.addEventListener("click",restartGame);
+  repeatGame.addEventListener("click", function(){ modal.close();});
 
 }
 
@@ -96,12 +109,13 @@ function cardClicked (){
   //Introduce the card selected into the stack to be analyzed
   openedCards.push(elementClicked);
 
+
  if (openedCards.length === 2){
+   updateCounter();
     // When we have 2 cards we can compare it's childrens where the class is different.
     if (openedCards[0].childNodes[0].className == openedCards[1].childNodes[0].className){
           // matching pair
           itsAMatch(elementClicked);
-          updateCounter();
 
       }else{
         // non-matching pairs
@@ -128,6 +142,11 @@ function itsAMatch(match){
   matchedCards.push(openedCards[0]);
   matchedCards.push(openedCards[1]);
 
+
+  if (matchedCards.length == 16){
+      showModalOfSuccess();
+  }
+
   openedCards[0].removeEventListener("click",cardClicked);
   openedCards[1].removeEventListener("click",cardClicked);
   // Reset the array to 0, so we can keep comparing pair by pair
@@ -143,13 +162,14 @@ function notAMatch(notMatch){
     openedCards[0].className = "card";
     openedCards[1].className = "card";
     openedCards = [];
-  }, 500);
+  }, 600);
 
 }
 
 function updateCounter(){
   counter = counter + 1;
   counterLiteral[0].innerHTML = counter;
+  ratingStars();
 }
 
 function restartGame(){
@@ -161,4 +181,55 @@ function restartGame(){
   restartButton[0].removeEventListener("click",restartGame);
 
   startGame();
+}
+
+function showModalOfSuccess(){
+  let modal = document.getElementById('demo-modal');
+  modal.showModal();
+    /* Creation of the paragraph to show data*/
+    let modalBody = document.getElementsByClassName("modal-body");
+    let paragraph = document.createElement("p");
+    let time = Date.now() - startingTime;
+    paragraph.innerHTML = `You made it! It took you ${counter} moves and ${msToTime(time)} !`;
+    modalBody[0].appendChild(paragraph);
+
+    // close when clicking on backdrop
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.close('cancelled');
+      }
+    });
+}
+
+function ratingStars(){
+
+  switch (true) {
+    case (counter > 0 && counter < 10):
+        break;
+    case (counter >= 10 && counter < 18):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        break;
+    case (counter >= 18 && counter < 24):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        document.getElementsByClassName("star2")[0].classList.add("hide");
+        break;
+    case (counter >= 24):
+        document.getElementsByClassName("star1")[0].classList.add("hide");
+        document.getElementsByClassName("star2")[0].classList.add("hide");
+        document.getElementsByClassName("star3")[0].classList.add("hide");
+        break;
+      }
+  }
+
+function msToTime(duration) {
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 }
