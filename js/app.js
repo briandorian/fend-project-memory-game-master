@@ -27,6 +27,8 @@ let matchedCards = new Array();
 let counterLiteral = document.getElementsByClassName("moves");
 let startingTime;
 let howManyStars;
+var second,minute,interval;
+var timer = document.querySelector(".timer");
 
 // Function to force the startGame function to execute with each refresh of the page and access.
 window.onload = startGame;
@@ -38,6 +40,10 @@ function startGame(){
   openedCards = [];
   matchedCards = [];
   startingTime = Date.now();
+
+  second=0;
+  minute=0;
+  startTimer();
 
   // Shuffle of the cards
   const shuffledCardTile = shuffle(cardTile);
@@ -103,6 +109,8 @@ function startGame(){
   repeatGame.addEventListener("click",restartGame);
   repeatGame.addEventListener("click", function(){ modal.close();});
 
+  paragraphText= "";
+
 }
 
 function cardClicked (){
@@ -134,6 +142,7 @@ function handleShowingCard(elementClicked){
      elementClicked.classList.toggle("open");
      elementClicked.classList.toggle("show");
      elementClicked.classList.toggle("disabled");
+
 }
 
 /*Function to handle the matching pairs*/
@@ -190,15 +199,28 @@ function restartGame(){
 
 // Modal to be shown when the game ends
 function showModalOfSuccess(){
-  let modal = document.getElementById('demo-modal');
-  modal.showModal();
+
+  if (document.getElementById('paragraph-modal')){
+      if (document.getElementById("paragraph-modal").innerHTML !== " " )
+      {
+      document.getElementById("paragraph-modal").innerHTML= "";
+      }
+    }
+
+    let modal = document.getElementById('demo-modal');
+
+    modal.showModal();
     /* Creation of the paragraph to show data*/
     let modalBody = document.getElementsByClassName("modal-body");
     let paragraph = document.createElement("p");
+    paragraph.setAttribute("id", "paragraph-modal");
+
     let time = Date.now() - startingTime;
+
 
     paragraph.innerHTML = `You made it! It took you ${counter} moves and
     ${msToTime(time)} (H:m:s:ms) with a rating of ${howManyStars} stars!!`;
+
     modalBody[0].appendChild(paragraph);
 
     // close when clicking on backdrop
@@ -213,28 +235,22 @@ function showModalOfSuccess(){
 function ratingStars(){
 
   switch (true) {
-    case (counter > 0 && counter < 10):
+    case (counter > 0 && counter < 15):
         howManyStars = 3;
         break;
-    case (counter >= 10 && counter < 18):
+    case (counter >= 15 && counter < 21):
         document.getElementsByClassName("star1")[0].classList.add("hide");
         howManyStars = 2;
         break;
-    case (counter >= 18 && counter < 24):
+    case (counter >= 21):
         document.getElementsByClassName("star1")[0].classList.add("hide");
         document.getElementsByClassName("star2")[0].classList.add("hide");
         howManyStars = 1;
         break;
-    case (counter >= 24):
-        document.getElementsByClassName("star1")[0].classList.add("hide");
-        document.getElementsByClassName("star2")[0].classList.add("hide");
-        document.getElementsByClassName("star3")[0].classList.add("hide");
-        howManyStars=0;
-        break;
       }
   }
 
-// Function to convert ms to HH:mm:ss:ms 
+// Function to convert ms to HH:mm:ss:ms
 function msToTime(duration) {
   var milliseconds = parseInt((duration % 1000) / 100),
     seconds = parseInt((duration / 1000) % 60),
@@ -247,3 +263,20 @@ function msToTime(duration) {
 
   return hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 }
+
+/* Timer section, solution found in stackoverflow*/
+
+function startTimer(){
+    interval = setInterval(function(){
+        timer.innerHTML = minute+"mins "+second+"secs";
+        second++;
+        if(second == 60){
+            minute++;
+            second = 0;
+        }
+        if(minute == 60){
+            hour++;
+            minute = 0;
+        }
+    },1000); 
+  }

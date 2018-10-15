@@ -108,6 +108,12 @@ h1 {
   cursor: pointer;
 }
 
+.score-panel .safeTimer {
+  float: right;
+  cursor: pointer;
+  padding-left: 20px;
+}
+
 .hide {
   display: none;
 }
