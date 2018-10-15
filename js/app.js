@@ -117,12 +117,15 @@ function cardClicked (){
   const elementClicked = event.target;
 
   handleShowingCard(elementClicked);
+  elementClicked.setAttribute('style', 'pointer-events: none');
 
   //Introduce the card selected into the stack to be analyzed
   openedCards.push(elementClicked);
 
 
  if (openedCards.length === 2){
+   //BLoquear todo el resto de cartas
+   blockCards();
    updateCounter();
     // When we have 2 cards we can compare it's childrens where the class is different.
     if (openedCards[0].childNodes[0].className == openedCards[1].childNodes[0].className){
@@ -165,6 +168,9 @@ function itsAMatch(match){
   // Reset the array to 0, so we can keep comparing pair by pair
   openedCards=[];
 
+  unblockCards();
+
+
 }
 
 /* Function to handle when a pair isn't a match*/
@@ -175,6 +181,8 @@ function notAMatch(notMatch){
     openedCards[0].className = "card";
     openedCards[1].className = "card";
     openedCards = [];
+    unblockCards();
+
   }, 600);
 
 }
@@ -280,3 +288,17 @@ function startTimer(){
         }
     },1000); 
   }
+
+  function blockCards(){
+    let cards = document.getElementsByClassName("card");
+    for (card of cards){
+      card.setAttribute('style', 'pointer-events: none');
+    }
+  }
+
+    function unblockCards(){
+      let cards = document.getElementsByClassName("card");
+      for (card of cards){
+        card.setAttribute('style', 'pointer-events: auto');
+      }
+    }
